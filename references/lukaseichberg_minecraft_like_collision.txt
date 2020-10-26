@@ -1,0 +1,86 @@
+// Author: Lukas Eichberg
+// Youtube video: Minecraft Clone [3D Software renderer]
+//                https://www.youtube.com/watch?v=xj4D6Jtgti4
+// Link: https://lukaseichberg.com/files/public/minecraft_like_collision.txt
+// Note: kindly granted and authorized by the author 
+
+while (running) {
+	vel.x = 0;
+	vel.y -= gravity;
+	vel.z = 0;
+	onGround = false;
+
+	// Handle Keyinput and set x & z velocity here
+
+	if (vel.y > 0) {
+		if (
+			world.getBlock(			// getBlock gets the block id. 0 is air.
+				(int) Math.floor(pos.x),
+				(int) Math.floor(pos.y + playerHeight + vel.y),
+				(int) Math.floor(pos.z)
+			) > 0
+		) {	
+			vel.y = 0;
+		}
+	} else {
+		while (
+			world.getBlock(
+				(int) Math.floor(pos.x),
+				(int) Math.floor(pos.y),
+				(int) Math.floor(pos.z)
+			) > 0
+		) {
+			pos.y = (int) (pos.y + vel.y) + 1;
+			vel.y = 0;
+			onGround = true;
+		}
+	}
+
+	if (
+		world.getBlock(
+			(int) Math.floor(pos.x + vel.x + Math.signum(vel.x) * halfPlayerThickness),
+			(int) Math.floor(pos.y),
+			(int) Math.floor(pos.z)
+		) > 0 ||
+		world.getBlock(
+			(int) Math.floor(pos.x + vel.x + Math.signum(vel.x) * halfPlayerThickness),
+			(int) Math.floor(pos.y + 1),
+			(int) Math.floor(pos.z)
+		) > 0 ||
+		world.getBlock(
+			(int) Math.floor(pos.x + vel.x + Math.signum(vel.x) * halfPlayerThickness),
+			(int) Math.floor(pos.y + 1.8f),		// 1.8f is the player height
+			(int) Math.floor(pos.z)
+		) > 0
+	) {	
+		vel.x = 0;
+	}
+
+	if (
+		world.getBlock(
+			(int) Math.floor(pos.x),
+			(int) Math.floor(pos.y),
+			(int) Math.floor(pos.z + vel.z + Math.signum(vel.z) * halfPlayerThickness)
+		) > 0 ||
+		world.getBlock(
+			(int) Math.floor(pos.x),
+			(int) Math.floor(pos.y + 1f),
+			(int) Math.floor(pos.z + vel.z + Math.signum(vel.z) * halfPlayerThickness)
+		) > 0 ||
+		world.getBlock(
+			(int) Math.floor(pos.x),
+			(int) Math.floor(pos.y + 1.8f),		// 1.8f is the player height
+			(int) Math.floor(pos.z + vel.z + Math.signum(vel.z) * halfPlayerThickness)
+		) > 0
+	) {
+		vel.z = 0;
+	}
+
+	if (spacePressed && onGround) {
+		vel.y += jumpStrength;
+	}
+
+	pos = pos.add(vel);
+
+	// Update render here
+}
